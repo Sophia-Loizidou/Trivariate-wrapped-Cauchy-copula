@@ -12,7 +12,7 @@ Data generation is currently not supported for Kato-Jones marginals.
 
 
 The trivariate wrapped Cauchy copula is proposed in LINK TO ARXIV PAPER and is a copula on the three dimensional torus that is given by:
-$$ c(u_1,u_2,u_3) =  c_2 \Bigl[ c_1 + 2 \left( \rho_{12} cos (u_1 - u_2) + \rho_{13} cos (u_1 - u_3) + \rho_{23} cos (u_2 - u_3) \right) \Bigr]^{-1}$$
+$$ c(u_1,u_2,u_3) =  c_2 \Bigl[ c_1 + 2 \left( \rho_{12} \cos (u_1 - u_2) + \rho_{13} \cos (u_1 - u_3) + \rho_{23} \cos (u_2 - u_3) \right) \Bigr]^{-1}$$
 for $0 \leq u_1,u_2, u_3 < 2\pi$
 where $\rho_{12},\rho_{13},\rho_{23} \in \mathbb{R} \setminus \{0\} $, $\rho_{12}\rho_{13} \rho_{23} >0$.
 
