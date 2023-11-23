@@ -8,7 +8,7 @@ where $\rho_{12},\rho_{13},\rho_{23} \in \mathbb{R} \setminus \{0\} $, $\rho_{12
 The constants $c_1$ and $c_2$ are given by
 $$c_1 = \frac{\rho_{12} \rho_{13}}{ \rho_{23}} + \frac{\rho_{12} \rho_{23}}{\rho_{13}} + \frac{ \rho_{13} \rho_{23} }{\rho_{12}}$$
 and
-$$c_2 = \frac{1}{(2\pi)^3} \left\{ \left( \frac{\rho_{12} \rho_{13}}{ \rho_{23}} \right)^2 + \left( \frac{\rho_{12} \rho_{23}}{\rho_{13}} \right)^2 + \left(\frac{\rho_{13} \rho_{23}}{\rho_{12}} \right)^2 - 2 \rho_{12}^2 - 2 \rho_{13}^2 - 2 \rho_{23}^2 \right\}^{1/2}.$$
+$$c_2 = \frac{1}{(2\pi)^3} \left[ \left( \frac{\rho_{12} \rho_{13}}{ \rho_{23}} \right)^2 + \left( \frac{\rho_{12} \rho_{23}}{\rho_{13}} \right)^2 + \left(\frac{\rho_{13} \rho_{23}}{\rho_{12}} \right)^2 - 2 \rho_{12}^2 - 2 \rho_{13}^2 - 2 \rho_{23}^2 \right]^{1/2}.$$
 
 We are assuming that there exists a permutation of $(1,2,3)$, $(j,k,\ell)$, such that $|\rho_{k \ell}| < |\rho_{jk} \rho_{j \ell}| / ( |\rho_{jk}| + |\rho_{j \ell}|)$, where $\rho_{kj} = \rho_{jk}$ for $1 \leq j < k \leq 3$.
 
