@@ -1,10 +1,10 @@
 # Trivariate-wrapped-Cauchy-copula
 
-Let
-\begin{align}
+The trivariate wrapped Cauchy copula has the form
+$$
 	\lefteqn{ c(u_1,u_2,u_3) =  c_2 \Bigl[ c_1 + 2 \left\{ \rho_{12} \cos (u_1 - u_2) + \rho_{13} \cos (u_1 - u_3) + \rho_{23} \cos (u_2 - u_3) \right\} \Bigr]^{-1}, } \label{eq:tri_density} \hspace{11cm} \\
 	&  0 \leq u_1,u_2, u_3 < 2\pi, \nonumber
-\end{align}
+$$
 where $\rho_{12},\rho_{13},\rho_{23} \in \mathbb{R} \setminus \{0\} $, $\rho_{12}\rho_{13} \rho_{23} >0$,
 \begin{equation}
 c_1 = \frac{\rho_{12} \rho_{13}}{ \rho_{23}} + \frac{\rho_{12} \rho_{23}}{\rho_{13}} + \frac{ \rho_{13} \rho_{23} }{\rho_{12}}, \label{eq:c1}
