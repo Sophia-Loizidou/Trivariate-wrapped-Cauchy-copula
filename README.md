@@ -1,6 +1,6 @@
 # Trivariate wrapped Cauchy copula
 
-This GitHub repo contains codes that can be used to fit the trivariate wrapped Cauchy copula on data using MLE, with user-specified marginals. The codes include functions to plot the two dimensional contour plots of a density with specified parameters and plot data points generated from the specified distribution.  The choices for the marginals are 
+This GitHub repo contains codes that can be used to fit the trivariate wrapped Cauchy copula on data using MLE, with user-specified marginals. The choices for the marginals are 
 * Uniform distribution
 * wrapped Cauchy distribution
 * von Mises distribution
