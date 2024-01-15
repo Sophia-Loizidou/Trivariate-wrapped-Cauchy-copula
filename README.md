@@ -8,10 +8,11 @@ This GitHub repo contains codes that can be used to fit the trivariate wrapped C
 * Kato-Jones distribution
 * weibull distribution (for linear components)
 
+Any combination of the above distributions is possible.
 Data generation is currently not supported for Kato-Jones marginals.
 
 
-The trivariate wrapped Cauchy copula is proposed in LINK TO ARXIV PAPER and is a copula on the three dimensional torus that is given by:
+The trivariate wrapped Cauchy copula is proposed in S. Kato, C. Ley and S. Loizidou (2024): The trivariate wrapped Cauchy copula - a multi-purpose model for angular data (LINK TO ARXIV PAPER) and is a copula on the three dimensional torus that is given by:
 
 $$ c(u_1,u_2,u_3) =  c_2 \Bigl[ c_1 + 2 \left( \rho_{12} \cos (u_1 - u_2) + \rho_{13} \cos (u_1 - u_3) + \rho_{23} \cos (u_2 - u_3) \right) \Bigr]^{-1}$$
 
@@ -25,3 +26,4 @@ $$c_2 = \frac{1}{(2\pi)^3} \left[ \left( \frac{\rho_{12} \rho_{13}}{ \rho_{23}} 
 
 We are assuming that there exists a permutation of $(1,2,3)$, $(j,k,\ell)$, such that $|\rho_{k \ell}| < |\rho_{jk} \rho_{j \ell}| / ( |\rho_{jk}| + |\rho_{j \ell}|)$, where $\rho_{kj} = \rho_{jk}$ for $1 \leq j < k \leq 3$.
 
+The repo includes two R files. The functions included in the 'MLE.R' file require the functions included in the 'functions for trivariate wrapped Cauchy copula.R' to run

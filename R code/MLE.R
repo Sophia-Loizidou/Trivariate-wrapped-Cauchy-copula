@@ -1,3 +1,14 @@
+"
+Functions included in the file:
+* mle.copula(): main function, outputs maximum likelihood estimates for the parameter
+* For estimating the mle parameters for the marginals:
+    * mle.marginals.wrpcauchy()
+    * mle.marginals.katojones()
+    * mle.copula.params()
+    
+The functions included in the file 'functions for trivariate wrapped Cauchy copula.R' are also required for this to run.
+"
+
 mle.copula = function(x,ninipar=NULL,max=NULL,min=NULL, marginals = rep('uniform', 3),  
                                verbose = FALSE, return_data = FALSE){ 
   
@@ -231,7 +242,7 @@ mle.copula.params <- function(uniform_x,ninipar=NULL,max=NULL,min=NULL, verbose 
     rho13 = (1 + sqrt(1 + 4*abs(rho23)^3)) / (2*abs(rho23)^2) * 1 / par[1]
     rho12 = 1/(rho23*rho13)
     
-    -sum(log(dtri(uniform_x, rho12 = rho12, rho13 = rho13, rho23 = rho23)))
+    -sum(log(dtri_copula(uniform_x, rho12 = rho12, rho13 = rho13, rho23 = rho23)))
   }
   
   valllfin12=Inf
@@ -271,7 +282,7 @@ mle.copula.params <- function(uniform_x,ninipar=NULL,max=NULL,min=NULL, verbose 
     rho12 = (1 + sqrt(1 + 4*abs(rho13)^3)) / (2*abs(rho13)^2) * 1 / par[1]
     rho23 = 1/(rho12*rho13)
     
-    -sum(log(dtri(uniform_x, rho12 = rho12, rho13 = rho13, rho23 = rho23)))
+    -sum(log(dtri_copula(uniform_x, rho12 = rho12, rho13 = rho13, rho23 = rho23)))
   }
   
   valllfin23=Inf
@@ -309,7 +320,7 @@ mle.copula.params <- function(uniform_x,ninipar=NULL,max=NULL,min=NULL, verbose 
     rho23 = (1 + sqrt(1 + 4*abs(rho12)^3)) / (2*abs(rho12)^2) * 1 / par[1]
     rho13 = 1/(rho23*rho12)
     
-    -sum(log(dtri(uniform_x, rho12 = rho12, rho13 = rho13, rho23 = rho23)))
+    -sum(log(dtri_copula(uniform_x, rho12 = rho12, rho13 = rho13, rho23 = rho23)))
   }
   
   valllfin13=Inf
@@ -366,142 +377,22 @@ mle.copula.params <- function(uniform_x,ninipar=NULL,max=NULL,min=NULL, verbose 
   return(list('final_rho12' = final_rho12, 'final_rho23' = final_rho23, 'final_rho13' = final_rho13, 'final_LL' = final_LL))
 }
 
-## calculating the cdf of wrapped Cauchy distribution given theta, mu, rho
-cdf_wrpcauchy <- function(theta, mu, rho){
-  require(CircStats)
-  
-  if((rho >= 1) | (rho < 0)){stop('rho should be in the interval [0,1)')}
-  
-  theta <- theta %% (2*pi)
-  mu <- mu %% (2*pi)
-  
-  pdf <- function(x){dwrpcauchy(x, mu, rho)}
-  cdf <- numeric(length(theta))
-  
-  for(i in 1:length(theta)){
-    # cat('theta', theta[i], 'rho', rho, 'mu', mu, '\n')
-    tryCatch(
-      {
-        cdf[i] <- integrate(pdf, 0, theta[i])$value
-      }, 
-      error=function(e) {
-        message('An Error Occurred')
-        cat('theta', theta[i], 'rho', rho, 'mu', mu, '\n')
-        print(e)
-      }
-    )
-    # cdf[i] <- integrate(pdf, 0, theta[i])$value
-  }
-  
-  return(cdf)
-  
-  ## Trying to calculate cdf without integral form
-  # print(atan((1+rho)^2 / (1-rho^2) * tan((theta - mu)/2)) / pi)
-  # print(atan((1+rho)^2 / (1-rho^2) * tan((- mu)/2)))
-  # cdf2 <- 1/(pi) * (atan((1+rho)^2 / (1-rho^2) * tan((theta - mu)/2) %% (pi)) - atan((1+rho)^2 / (1-rho^2) * tan((- mu)/2) %% (pi)))
-  # # return(sum(cdf - cdf2))
-  # print(cdf)
-  # # print(cdf2)
-  # return((cdf - cdf2))
-}
 
-## calculating the inverse cdf of wrapped Cauchy distribution given p, mu, rho
-inv_cdf_wrpcauchy <- function(p, mu, rho){
-  if((rho >= 1) | (rho < 0)){stop('rho should be in the interval [0,1)')}
-  
-  mu <- mu %% (2*pi)
-  
-  inv_cdf <- mu + 2*atan((1-rho)/(1+rho)*tan(p/2))
-  
-  return(inv_cdf)
-}
+## Examples
+# The functions from 'functions for trivariate wrapped Cauchy copula.R' are required
+source("~/functions for trivariate wrapped Cauchy copula.R")
 
-## calculating the pdf of Kato-Jones distribution given theta, mu, gamma, rho, lambda
-dkatojones <- function(theta, mu, gamma, rho, lambda){
-  alpha2 = rho*gamma*cos(lambda)
-  beta2 = rho*gamma*sin(lambda)
-  value = (1+2/rho*(alpha2*cos(theta-mu-lambda)-beta2*sin(theta-mu-lambda)-rho*alpha2)/(1+rho^2-2*rho*cos(theta-mu-lambda)))/(2*pi)
-  return(value)
-}
+set.seed(2)
+x <- rtri(1500, rho12 = 1, rho13 = 0.25, rho23 = 4, 
+          marginals = c('wrapped Cauchy', 'uniform', 'weibull'), 
+          params1 = list(mu = 0, rho = 0.2), params3 = list(shape = 1, scale = 1))
 
-## calculating the cdf of Kato-Jones distribution given theta, mu, gamma, rho, lambda
-cdf_katojones <- function(theta, mu, gamma, rho, lambda){
-  a=((1-gamma*cos(lambda)/rho)*(theta-mu+pi)+gamma*sin(lambda)/rho*log((1+rho^2+2*rho*cos(lambda))/(1+rho^2-2*rho*cos(theta-mu-lambda)))+2*gamma*cos(lambda)/rho*(atan((1+rho)/(1-rho)*tan((theta-mu-lambda)/2))-atan((1+rho)/(1-rho)/tan(lambda/2))))/(2*pi)
-  check <- tan((theta-mu-lambda)/2)< tan((-pi-lambda)/2)
-  if(any(check)){
-    a[check] = a[check] + gamma*cos(lambda)/rho
-  }
-  return(a)
-}
-
-## Function to find the value of F^{-1}(theta) for all three components according to the input of marginals
-vector_to_uniform <- function(x, marginals = rep('wrapped cauchy', 3), params = NULL){
-  x <- x %% (2*pi)
-  if(marginals == 'wrapped cauchy'){
-    uniform_x <- cdf_wrpcauchy(x, params$mu, params$rho)
-  } else if (marginals == 'cardioid'){
-    require(VGAM)
-    uniform_x <- pcard(x, params$mu, params$rho)
-    
-  } else if (marginals == 'vonmises'){
-    require(circular)
-    uniform_x <- pvonmises(circular(x), circular(params$mu), params$kappa, from = circular(0))
-    
-  } else if(marginals == 'katojones'){
-    uniform_x <- cdf_katojones(x, params$mu, params$gamma, params$rho, params$lambda)
-    
-  } else if(marginals == 'weibull'){
-    uniform_x <- pweibull(x, params$shape, params$scale)
-  } 
-  uniform_x <- uniform_x * 2*pi
-  
-  return(uniform_x)
-}
-
-## Function for checking that all inputs are allowed
-check_parameters <- function(marginals = rep('uniform', 3), params1 = NULL, params2 = NULL, params3 = NULL){
-  if(any(length(marginals) != c(2,3))){stop("'marginals' should be a vector of length 3 with elements 'uniform', 'wrapped cauchy', 'cardioid',
-         'vonMises' or 'katojones' for the circular part and 'weibull' for the linear part")}
-  if(any(!(marginals %in% c('uniform', 'wrapped cauchy', 'cardioid', 'vonmises', 'katojones', 'weibull')))){
-    stop("'marginals' should be a vector of length 3 with elements 'uniform', 'wrapped cauchy', 'cardioid', 
-         'vonMises' or 'katojones' for the circular part and 'weibull' for the linear part")
-  }
-  
-  if(any(marginals != 'uniform')){
-    
-    ind_temp = ifelse(is.null(params3), 2, 3)
-    
-    for(i in 1:ind_temp){
-      if(marginals[i] == 'wrapped cauchy'){
-        if(!is.list(eval(parse(text = paste('params', i, sep =''))))){stop("'params1', 'params2', 'params3' should contain the parameters of the marginal distribution. Wrapped Cauchy and cardioid require rho, mu. von Mises requires mu, kappa. Kato-Jones requires mu, gamma, rho, lambda. Weibull requires shape and scale.")}
-        
-        if(!is.numeric(eval(parse(text = paste('params', i, sep ='')))$rho)){stop("The list of parameters for wrapped cauchy marginals should include 'rho'")}
-        if(!is.numeric(eval(parse(text = paste('params', i, sep ='')))$mu)){stop("The list of parameters for wrapped cauchy marginals should include 'mu'")}
-      } else if (marginals[i] == 'cardioid'){
-        if(!is.list(eval(parse(text = paste('params', i, sep =''))))){stop("'params1', 'params2', 'params3' should contain the parameters of the marginal distribution. Wrapped Cauchy and cardioid require rho, mu. von Mises requires mu, kappa. Kato-Jones requires mu, gamma, rho, lambda. Weibull requires shape and scale.")}
-        
-        if(!is.numeric(eval(parse(text = paste('params', i, sep ='')))$rho)){stop("The list of parameters for cardioid marginals should include 'rho'")}
-        if(!is.numeric(eval(parse(text = paste('params', i, sep ='')))$mu)){stop("The list of parameters for cardioid marginals should include 'mu'")}
-      } else if (marginals[i] == 'vonmises'){
-        if(!is.list(eval(parse(text = paste('params', i, sep =''))))){stop("'params1', 'params2', 'params3' should contain the parameters of the marginal distribution. Wrapped Cauchy and cardioid require rho, mu. von Mises requires mu, kappa. Kato-Jones requires mu, gamma, rho, lambda. Weibull requires shape and scale.")}
-        
-        if(!is.numeric(eval(parse(text = paste('params', i, sep ='')))$mu)){stop("The list of parameters for von Mises marginals should include 'mu'")}
-        if(!is.numeric(eval(parse(text = paste('params', i, sep ='')))$kappa)){stop("The list of parameters for von Mises marginals should include 'kappa'")}
-      } else if (marginals[i] == 'katojones'){
-        if(!is.list(eval(parse(text = paste('params', i, sep =''))))){stop("'params1', 'params2', 'params3' should contain the parameters of the marginal distribution. Wrapped Cauchy and cardioid require rho, mu. von Mises requires mu, kappa. Kato-Jones requires mu, gamma, rho, lambda. Weibull requires shape and scale.")}
-        
-        if(!is.numeric(eval(parse(text = paste('params', i, sep ='')))$mu)){stop("The list of parameters for Kato-Jones marginals should include 'mu'")}
-        if(!is.numeric(eval(parse(text = paste('params', i, sep ='')))$gamma)){stop("The list of parameters for Kato-Jones marginals should include 'gamma'")}
-        if(!is.numeric(eval(parse(text = paste('params', i, sep ='')))$rho)){stop("The list of parameters for Kato-Jones marginals should include 'rho'")}
-        if(!is.numeric(eval(parse(text = paste('params', i, sep ='')))$lambda)){stop("The list of parameters for Kato-Jones marginals should include 'lambda'")}
-      } else if (marginals[i] == 'weibull'){
-        if(!is.list(eval(parse(text = paste('params', i, sep =''))))){stop("'params1', 'params2', 'params3' should contain the parameters of the marginal distribution. Wrapped Cauchy and cardioid require rho, mu. von Mises requires mu, kappa. Kato-Jones requires mu, gamma, rho, lambda. Weibull requires shape and scale.")}
-        
-        if(!is.numeric(eval(parse(text = paste('params', i, sep ='')))$shape)){stop("The list of parameters for Weibull marginals should include 'shape'")}
-        if(!is.numeric(eval(parse(text = paste('params', i, sep ='')))$scale)){stop("The list of parameters for Weibull marginals should include 'scale'")}
-      }
-    }
-  }
-}
-
+# Estimating the maximum likelihood estimates of the parameters
+parameters <- mle.copula(x, ninipar = 100, max = 50, min = -50,
+                         marginals = c('wrapped Cauchy', 'uniform', 'weibull'))
+# Copula parameters
+parameters[c('rho12', 'rho13', 'rho23')]
+parameters$params1
+parameters$params2
+parameters$params3
 
