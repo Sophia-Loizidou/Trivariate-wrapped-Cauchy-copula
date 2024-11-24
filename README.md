@@ -12,7 +12,7 @@ Any combination of the above distributions is possible.
 Data generation is currently not supported for Kato-Jones marginals.
 
 
-The trivariate wrapped Cauchy copula is proposed in S. Kato, C. Ley and S. Loizidou (2024): The trivariate wrapped Cauchy copula - a multi-purpose model for angular data (https://arxiv.org/abs/2401.10824) and is a copula on the three dimensional torus that is given by:
+The trivariate wrapped Cauchy copula is proposed in S. Kato, C. Ley, S. Loizidou and K.V.Mardia (2024): The trivariate wrapped Cauchy copula - a multi-purpose model for angular data (https://arxiv.org/abs/2401.10824) and is a copula on the three dimensional torus that is given by:
 
 $$ c(u_1,u_2,u_3) =  c_2 \Bigl[ c_1 + 2 \left( \rho_{12} \cos (u_1 - u_2) + \rho_{13} \cos (u_1 - u_3) + \rho_{23} \cos (u_2 - u_3) \right) \Bigr]^{-1}$$
 
