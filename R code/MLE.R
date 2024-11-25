@@ -79,10 +79,12 @@ mle.copula = function(x,ninipar=NULL,max=NULL,min=NULL, marginals = rep('uniform
   if (any(marginals == 'vonmises')){
     index <- which(marginals == 'vonmises')
     for(i in 1:length(index)){
-      eval(parse(text = paste('pars', index[i], ' = mle.vonmises(circular(x[,', index[i], ']))', sep ='')))
-      eval(parse(text = paste('pars', index[i], " = list('mu' = as.numeric(pars", index[i], "$mu), 'kappa' = pars", index[i], "$kappa)", sep ='')))
-      eval(parse(text = paste('uniform_x', index[i], ' = vector_to_uniform(x[,', index[i], "], marginals = 'vonmises', params = pars", index[i], ')', sep ='')))
-      eval(parse(text = paste('dens', index[i], ' = (2*pi) * dvonmises(circular(x[,', index[i],']),circular(pars', index[i],'$mu),pars', index[i], '$kappa)', sep ='')))
+      suppressWarnings({
+        eval(parse(text = paste('pars', index[i], ' = mle.vonmises(circular(x[,', index[i], ']))', sep ='')))
+        eval(parse(text = paste('pars', index[i], " = list('mu' = as.numeric(pars", index[i], "$mu), 'kappa' = pars", index[i], "$kappa)", sep ='')))
+        eval(parse(text = paste('uniform_x', index[i], ' = vector_to_uniform(x[,', index[i], "], marginals = 'vonmises', params = pars", index[i], ')', sep ='')))
+        eval(parse(text = paste('dens', index[i], ' = (2*pi) * dvonmises(circular(x[,', index[i],']),circular(pars', index[i],'$mu),pars', index[i], '$kappa)', sep ='')))
+      })
     }
   } 
   if(any(marginals == 'katojones')){

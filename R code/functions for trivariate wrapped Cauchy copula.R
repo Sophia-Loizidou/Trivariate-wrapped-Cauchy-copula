@@ -35,7 +35,9 @@ multiply_copula_denisty <- function(x, marginals, params1 = NULL, params2 = NULL
     require(circular)
     index <- which(marginals == 'vonmises')
     for(i in 1:length(index)){
-      eval(parse(text = paste('dens', index[i], ' = (2*pi) * dvonmises(circular(x[,', index[i],']),circular(params', index[i],'$mu),params', index[i], '$kappa)', sep ='')))
+      suppressWarnings(
+        eval(parse(text = paste('dens', index[i], ' = (2*pi) * dvonmises(circular(x[,', index[i],']),circular(params', index[i],'$mu),params', index[i], '$kappa)', sep ='')))
+      )
     }
   } 
   if (any(marginals == 'katojones')){
@@ -130,40 +132,43 @@ rtri <- function(n, rho12, rho13, rho23, marginals = rep('uniform', 3),
   
   u1 <- u1 %% (2*pi); u2 <- u2 %% (2*pi); u3 <- u3 %% (2*pi)
   
-  if (any(marginals == 'wrapped cauchy')){
-    index <- which(marginals == 'wrapped cauchy')
-    for(i in 1:length(index)){
-      eval(parse(text = paste('u', index[i], ' = inv_cdf_wrpcauchy(u', index[i],',params', index[i],'$mu,params', index[i], '$rho)', sep ='')))
+  suppressWarnings({
+    if (any(marginals == 'wrapped cauchy')){
+      index <- which(marginals == 'wrapped cauchy')
+      for(i in 1:length(index)){
+        eval(parse(text = paste('u', index[i], ' = inv_cdf_wrpcauchy(u', index[i],',params', index[i],'$mu,params', index[i], '$rho)', sep ='')))
+        eval(parse(text = paste('u', index[i], ' = u', index[i], '%% (2*pi)', sep ='')))
+      }
+    } 
+    if (any(marginals == 'cardioid')){
+      require(VGAM)
+      index <- which(marginals == 'cardioid')
+      for(i in 1:length(index)){
+        eval(parse(text = paste('u', index[i], ' = qcard(u', index[i],'/(2*pi),params', index[i],'$mu,params', index[i], '$rho)', sep ='')))
+        eval(parse(text = paste('u', index[i], ' = u', index[i], '%% (2*pi)', sep ='')))
+      }
+    } 
+    if (any(marginals == 'vonmises')){
+      require(circular)
+      index <- which(marginals == 'vonmises')
+      for(i in 1:length(index)){
+        eval(parse(text = paste('u', index[i], ' = qvonmises(u', index[i],'/(2*pi),circular(params', index[i],'$mu),params', index[i], '$kappa)', sep ='')))
+        eval(parse(text = paste('u', index[i], ' = u', index[i], '%% (2*pi)', sep ='')))
+      }
+    } 
+    if (any(marginals == 'katojones')){
+      stop('Data generation is not supported for Kato-Jones marginals')
     }
-  } 
-  if (any(marginals == 'cardioid')){
-    require(VGAM)
-    index <- which(marginals == 'cardioid')
-    for(i in 1:length(index)){
-      eval(parse(text = paste('u', index[i], ' = qcard(u', index[i],'/(2*pi),params', index[i],'$mu,params', index[i], '$rho)', sep ='')))
+    if (any(marginals == 'weibull')){
+      index <- which(marginals == 'weibull')
+      for(i in 1:length(index)){
+        eval(parse(text = paste('u', index[i], ' = qweibull(u', index[i],'/(2*pi),params', index[i],'$shape,params', index[i], '$scale)', sep ='')))
+      }
     }
-  } 
-  if (any(marginals == 'vonmises')){
-    require(circular)
-    index <- which(marginals == 'vonmises')
-    for(i in 1:length(index)){
-      eval(parse(text = paste('u', index[i], ' = qvonmises(u', index[i],'/(2*pi),circular(params', index[i],'$mu),params', index[i], '$kappa)', sep ='')))
-    }
-  } 
-  if (any(marginals == 'katojones')){
-    stop('Data generation is not supported for Kato-Jones marginals')
-  }
-  if (any(marginals == 'weibull')){
-    index <- which(marginals == 'weibull')
-    for(i in 1:length(index)){
-      eval(parse(text = paste('u', index[i], ' = qweibull(u', index[i],'/(2*pi),params', index[i],'$shape,params', index[i], '$scale)', sep ='')))
-    }
-  }
-  
-  u1 <- u1 %% (2*pi); u2 <- u2 %% (2*pi); u3 <- u3 %% (2*pi)
   
   u <- matrix(c(u1, u2, u3), ncol = 3)
   return(u)
+  })
 }
 
 ## Function for checking that all inputs are allowed
@@ -282,7 +287,9 @@ vector_to_uniform <- function(x, marginals = rep('wrapped cauchy', 3), params = 
     
   } else if (marginals == 'vonmises'){
     require(circular)
-    uniform_x <- pvonmises(circular(x), circular(params$mu), params$kappa, from = circular(0))
+    suppressWarnings(
+      uniform_x <- pvonmises(circular(x), circular(params$mu), params$kappa, from = circular(0))
+    )
     
   } else if(marginals == 'katojones'){
     uniform_x <- cdf_katojones(x, params$mu, params$gamma, params$rho, params$lambda)
