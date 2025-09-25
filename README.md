@@ -26,4 +26,4 @@ $$c_2 = \frac{1}{(2\pi)^3} \left[ \left( \frac{\rho_{12} \rho_{13}}{ \rho_{23}} 
 
 We are assuming that there exists a permutation of $(1,2,3)$, $(j,k,\ell)$, such that $|\rho_{k \ell}| < |\rho_{jk} \rho_{j \ell}| / ( |\rho_{jk}| + |\rho_{j \ell}|)$, where $\rho_{kj} = \rho_{jk}$ for $1 \leq j < k \leq 3$.
 
-This repository includes two R files. The functions included in the 'MLE.R' file require the functions included in the 'functions for trivariate wrapped Cauchy copula.R' to run
+This repository includes two R files. The functions included in the 'MLE.R' file require the functions included in the 'functions for trivariate wrapped Cauchy copula.R' to run.
